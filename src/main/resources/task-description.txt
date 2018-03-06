@@ -1,0 +1,19 @@
+We would like to create REST service for projects voting system.
+Below you may find a list of required functionality (end points)
+
+- we will need a list of projects to be voted for, each list element will have
+an identifier, a name and description; it should be sorted by project name
+
+- we will need a possibility of voting for, or against, specific project
+each voter will be pre-registered in the system, and will receive unique ID,
+voting process will require providing project ID, along with voter ID,
+and information if the vote is for, or against the project
+each voter can vote only once for specific project
+
+- we will need a possibility of closing the voting for specific project,
+it will require project ID as input,
+by the way, did I mention that voting for closed projects is forbidden?
+
+- we will need a project details end point, it will require project ID on entry,
+and will return project name, description,   information if project is open for voting,
+and the number of votes for and against it
