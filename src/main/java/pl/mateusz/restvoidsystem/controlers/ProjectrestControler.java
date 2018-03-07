@@ -7,7 +7,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import pl.mateusz.restvoidsystem.model.dtos.ProjectDto;
 import pl.mateusz.restvoidsystem.model.entity.Project;
+import pl.mateusz.restvoidsystem.model.entity.Vote;
+import pl.mateusz.restvoidsystem.model.entity.Voter;
 import pl.mateusz.restvoidsystem.model.repository.ProjectRepository;
+import pl.mateusz.restvoidsystem.model.repository.VoteRepository;
+import pl.mateusz.restvoidsystem.model.repository.VoterRepository;
 
 import java.util.*;
 
@@ -15,10 +19,14 @@ import java.util.*;
 public class ProjectrestControler {
 
     ProjectRepository projectRepository;
+    VoteRepository voteRepository;
+    VoterRepository voterRepository;
 
     @Autowired
-    public ProjectrestControler(ProjectRepository projectRepository) {
+    public ProjectrestControler(ProjectRepository projectRepository, VoteRepository voteRepository, VoterRepository voterRepository) {
         this.projectRepository = projectRepository;
+        this.voteRepository = voteRepository;
+        this.voterRepository = voterRepository;
     }
 
     @GetMapping("/api/project")
@@ -59,5 +67,24 @@ public class ProjectrestControler {
         });
 
         return ResponseEntity.ok().body((new ModelMapper()).map(project2, ProjectDto.class));
+    }
+
+    @PostMapping("/api/voteproject/{projectId}/{voterId}")
+    public ResponseEntity<Vote> voteProject(@PathVariable Long projectId,
+                                            @PathVariable Long voterId){
+        Vote vote = new Vote();
+        Optional<Project> project = projectRepository.findById(projectId);
+        Project project1 = project.get();
+
+        Optional<Voter> voter = voterRepository.findById(voterId);
+        Voter voter1 = voter.get();
+
+        vote.setProject(project1);
+        vote.setVoter(voter1);
+        vote.setVoteValue(1);
+
+        voteRepository.save(vote);
+
+        return ResponseEntity.ok().body((new ModelMapper().map(vote, Vote.class)));
     }
 }
