@@ -59,19 +59,23 @@ public class ProjectrestControler {
 
         ProjectDto projectDto = new ProjectDto();
 
-        project.ifPresent(project1 -> {
-            project1.setActive(false);
-            project1.setId(projectId);
+        if(project2.getActive()) {
+            project.ifPresent(project1 -> {
+                project1.setActive(false);
+                project1.setId(projectId);
+                project1.setCloseProject(new Date());
 
-            projectRepository.save(project1);
-        });
+                projectRepository.save(project1);
+            });
+        }
 
         return ResponseEntity.ok().body((new ModelMapper()).map(project2, ProjectDto.class));
     }
 
-    @PostMapping("/api/voteproject/{projectId}/{voterId}")
+    @PostMapping("/api/voteproject/{projectId}/{voterId}/{vote1}")
     public ResponseEntity<Vote> voteProject(@PathVariable Long projectId,
-                                            @PathVariable Long voterId){
+                                            @PathVariable Long voterId,
+                                            @PathVariable Integer vote1){
         Vote vote = new Vote();
         Optional<Project> project = projectRepository.findById(projectId);
         Project project1 = project.get();
@@ -79,12 +83,13 @@ public class ProjectrestControler {
         Optional<Voter> voter = voterRepository.findById(voterId);
         Voter voter1 = voter.get();
 
-        vote.setProject(project1);
-        vote.setVoter(voter1);
-        vote.setVoteValue(1);
+        if(project1.getActive()) {
+            vote.setProject(project1);
+            vote.setVoter(voter1);
+            vote.setVoteValue(vote1);
 
-        voteRepository.save(vote);
-
+            voteRepository.save(vote);
+        }
         return ResponseEntity.ok().body((new ModelMapper().map(vote, Vote.class)));
     }
 }
