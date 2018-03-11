@@ -17,14 +17,14 @@ import pl.mateusz.restvoidsystem.model.repository.VoterRepository;
 import java.util.*;
 
 @Controller
-public class ProjectrestControler {
+public class GetProjectRestControler {
 
     ProjectRepository projectRepository;
     VoteRepository voteRepository;
     VoterRepository voterRepository;
 
     @Autowired
-    public ProjectrestControler(ProjectRepository projectRepository, VoteRepository voteRepository, VoterRepository voterRepository) {
+    public GetProjectRestControler(ProjectRepository projectRepository, VoteRepository voteRepository, VoterRepository voterRepository) {
         this.projectRepository = projectRepository;
         this.voteRepository = voteRepository;
         this.voterRepository = voterRepository;
@@ -51,51 +51,7 @@ public class ProjectrestControler {
     }
 
 //    @RequestMapping(value = "/api/activeproject", method = RequestMethod.POST)
-    @PostMapping("/api/activeproject/{projectId}")
-    public ResponseEntity<ProjectDto> projectPatch(@PathVariable Long projectId){
 
-        Optional<Project> project = projectRepository.findById(projectId);
-
-        Project  project2 = project.get();
-
-        ProjectDto projectDto = new ProjectDto();
-
-        if(project2.getActive()) {
-            project.ifPresent(project1 -> {
-                project1.setActive(false);
-                project1.setId(projectId);
-                project1.setCloseProject(new Date());
-
-                projectRepository.save(project1);
-            });
-        }
-
-        return ResponseEntity.ok().body((new ModelMapper()).map(project2, ProjectDto.class));
-    }
-
-    @PostMapping("/api/voteproject/{projectId}/{voterId}/{vote1}")
-    public ResponseEntity<Vote> voteProject(@PathVariable Long projectId,
-                                            @PathVariable Long voterId,
-                                            @PathVariable Integer vote1){
-        Vote vote = new Vote();
-        Optional<Project> project = projectRepository.findById(projectId);
-        Project project1 = project.get();
-
-        Optional<Voter> voter = voterRepository.findById(voterId);
-        Voter voter1 = voter.get();
-
-        if(project1.getActive()) {
-            vote.setProject(project1);
-            vote.setVoter(voter1);
-            vote.setVoteValue(vote1);
-
-            voteRepository.save(vote);
-        }else {
-            project1.setProjectDescryption("Projek na który głosujesz jest zakończony");
-            vote.setProject(project1);
-        }
-        return ResponseEntity.ok().body((new ModelMapper().map(vote, Vote.class)));
-    }
 
     private int voteYes;
     private int voteNo;
