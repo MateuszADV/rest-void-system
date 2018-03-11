@@ -23,6 +23,15 @@ public class Project {
         this.active = active;
     }
 
+    public Project(String projectName, String projectDescryption, Boolean active, Date closeProject, Integer voiceYes, Integer voiceNo) {
+        this.projectName = projectName;
+        this.projectDescryption = projectDescryption;
+        this.active = active;
+        this.closeProject = closeProject;
+        this.voiceYes = voiceYes;
+        this.voiceNo = voiceNo;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -30,6 +39,7 @@ public class Project {
     private String projectDescryption;
     private Boolean active;
     private Date closeProject;
-
+    private Integer voiceYes;
+    private Integer voiceNo;
 
 }

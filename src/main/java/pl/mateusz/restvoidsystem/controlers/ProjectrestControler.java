@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import pl.mateusz.restvoidsystem.model.dtos.ProjectCountVoiceDto;
 import pl.mateusz.restvoidsystem.model.dtos.ProjectDto;
 import pl.mateusz.restvoidsystem.model.entity.Project;
 import pl.mateusz.restvoidsystem.model.entity.Vote;
@@ -89,7 +90,40 @@ public class ProjectrestControler {
             vote.setVoteValue(vote1);
 
             voteRepository.save(vote);
+        }else {
+            project1.setProjectDescryption("Projek na który głosujesz jest zakończony");
+            vote.setProject(project1);
         }
         return ResponseEntity.ok().body((new ModelMapper().map(vote, Vote.class)));
+    }
+
+    private int voteYes;
+    private int voteNo;
+
+    @GetMapping("/api/countvote/{project_Id}")
+    public ResponseEntity<ProjectCountVoiceDto> countVote(@PathVariable Long project_Id){
+
+        voteYes=0;
+        voteNo=0;
+        List<Vote> voteList = new ArrayList<>();
+        voteList = voteRepository.findByProject_Id(project_Id);
+
+        for (Vote vote : voteList) {
+
+                if (vote.getVoteValue().equals(1)){
+                    voteYes++;
+                }else if(vote.getVoteValue().equals(0)){
+                    voteNo++;
+                }        }
+
+
+        Optional<Project> project = projectRepository.findById(project_Id);
+
+        Project project1 = project.get();
+        ProjectCountVoiceDto projectCountVoiceDto = new ProjectCountVoiceDto();
+        project1.setVoiceYes(voteYes);
+        project1.setVoiceNo(voteNo);
+
+        return ResponseEntity.ok().body((new ModelMapper().map(project1, ProjectCountVoiceDto.class)));
     }
 }
