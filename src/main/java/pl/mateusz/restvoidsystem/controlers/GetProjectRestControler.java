@@ -56,6 +56,8 @@ public class GetProjectRestControler {
     private int voteYes;
     private int voteNo;
 
+
+    //Zlicznie złosów na dany projekt
     @GetMapping("/api/countvote/{project_Id}")
     public ResponseEntity<ProjectCountVoiceDto> countVote(@PathVariable Long project_Id){
 

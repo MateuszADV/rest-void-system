@@ -31,6 +31,8 @@ public class PostProjectRestControler {
         this.voterRepository = voterRepository;
     }
 
+
+    //Zmiana aktywnego projektu na nie aktywny
     @PostMapping("/api/activeproject/{projectId}")
     public ResponseEntity<ProjectDto> projectPatch(@PathVariable Long projectId){
 
@@ -53,6 +55,7 @@ public class PostProjectRestControler {
         return ResponseEntity.ok().body((new ModelMapper()).map(project2, ProjectDto.class));
     }
 
+    //głosowanie na projekt
     @PostMapping("/api/voteproject/{projectId}/{voterId}/{vote1}")
     public ResponseEntity<Vote> voteProject(@PathVariable Long projectId,
                                             @PathVariable Long voterId,
