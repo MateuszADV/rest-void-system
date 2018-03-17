@@ -54,13 +54,12 @@ public class ProjectRestControler {
 //    @RequestMapping(value = "/api/activeproject", method = RequestMethod.POST)
 
 
-    private int voteYes;
-    private int voteNo;
-
 
     //Zlicznie złosów na dany projekt
     @GetMapping("/api/project/{project_Id}")
     public ResponseEntity<ProjectCountVoiceDto> countVote(@PathVariable Long project_Id){
+        int voteYes;
+        int voteNo;
 
         voteYes=0;
         voteNo=0;
@@ -73,8 +72,8 @@ public class ProjectRestControler {
                     voteYes++;
                 }else if(vote.getVoteValue().equals(0)){
                     voteNo++;
-                }        }
-
+                }
+        }
 
         Optional<Project> project = projectRepository.findById(project_Id);
 
@@ -102,7 +101,7 @@ public class ProjectRestControler {
         if(project2.getActive()) {
             project.ifPresent(project1 -> {
                 project1.setActive(false);
-                project1.setId(projectId);
+                //project1.setId(projectId);   jest nie potrzebne
                 project1.setCloseProject(new Date());
 
                 projectRepository.save(project1);
@@ -131,6 +130,7 @@ public class ProjectRestControler {
 
             voteRepository.save(vote);
         }else {
+            //nie robiućw ten sposób lepiej dać wyjątek
             project1.setProjectDescryption("Projek na który głosujesz jest zakończony");
             vote.setProject(project1);
         }
