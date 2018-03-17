@@ -7,13 +7,11 @@ import java.util.Date;
 
 @Getter
 @Setter
-public class ProjectCountVoiceDto {
+public class ProjectWithStatusDto {
 
+    private Long id;
     private String projectName;
     private String projectDescryption;
     private Boolean active;
     private Date closeProject;
-
-    private int voiceYes;
-    private int voiceNo;
 }

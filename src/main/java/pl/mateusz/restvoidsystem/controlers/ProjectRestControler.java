@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import pl.mateusz.restvoidsystem.model.dtos.ProjectCountVoiceDto;
 import pl.mateusz.restvoidsystem.model.dtos.ProjectDto;
+import pl.mateusz.restvoidsystem.model.dtos.ProjectWithStatusDto;
 import pl.mateusz.restvoidsystem.model.dtos.VoteDto;
 import pl.mateusz.restvoidsystem.model.entity.Project;
 import pl.mateusz.restvoidsystem.model.entity.Vote;
@@ -23,13 +24,16 @@ public class ProjectRestControler {
     ProjectRepository projectRepository;
     VoteRepository voteRepository;
     VoterRepository voterRepository;
+    ProjectService projectService;
 
     @Autowired
-    public ProjectRestControler(ProjectRepository projectRepository, VoteRepository voteRepository, VoterRepository voterRepository) {
+    public ProjectRestControler(ProjectRepository projectRepository, VoteRepository voteRepository, VoterRepository voterRepository, ProjectService projectService) {
         this.projectRepository = projectRepository;
         this.voteRepository = voteRepository;
         this.voterRepository = voterRepository;
+        this.projectService = projectService;
     }
+
 
     @GetMapping("/api/project")
     public ResponseEntity<List<ProjectDto>> getProject(){
@@ -135,5 +139,39 @@ public class ProjectRestControler {
             vote.setProject(project1);
         }
         return ResponseEntity.ok().body((new ModelMapper().map(vote, VoteDto.class)));
+    }
+
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    @PostMapping("/api/project/{projectId}/vote")
+    public ResponseEntity<VoteDto> makeVote(@PathVariable Long projectId,
+                                            @RequestParam Long voterId,
+                                            @RequestParam int voteValue){
+
+        VoteDto voteDto = projectService.makeVote(projectId,voterId,voteValue);
+
+
+        return ResponseEntity.ok(voteDto);
+
+    }
+
+
+    @PutMapping("/api/project/{projectId}/active")
+    public ResponseEntity<ProjectWithStatusDto> changeStatus(@PathVariable Long projectId,
+                                                             @RequestParam Boolean active){
+
+        return ResponseEntity.ok(projectService.changeStatus(projectId,active));
+    }
+
+    @GetMapping("/api/projectt/{projectId}")
+    public ResponseEntity<ProjectCountVoiceDto> projectDetails(@PathVariable Long projectId){
+
+        Optional<ProjectCountVoiceDto> optionalProjectCountVotes = projectService.getProjectCountVotes(projectId);
+
+        if(!optionalProjectCountVotes.isPresent()){
+            throw new RuntimeException("Prject doesn't exist");
+        }
+
+        return ResponseEntity.ok(optionalProjectCountVotes.get());
     }
 }
