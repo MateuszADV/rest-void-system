@@ -98,7 +98,6 @@ public class ProjectService {
             }
         }
 
-
         ProjectCountVoiceDto projectCountVoiceDto =
                 new ModelMapper().map(projectOptional.get(), ProjectCountVoiceDto.class);
 
@@ -109,5 +108,4 @@ public class ProjectService {
 
         return Optional.of(projectCountVoiceDto);
     }
-
 }
